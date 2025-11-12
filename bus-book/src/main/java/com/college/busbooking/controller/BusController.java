@@ -39,4 +39,61 @@ public class BusController {
             return ResponseEntity.badRequest().body(response);
         }
     }
+
+    @PutMapping("/{id}/reset-seats")
+    public ResponseEntity<?> resetSeats(@PathVariable Long id) {
+        try {
+            Bus updatedBus = busService.resetSeats(id);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Bus seats reset successfully!");
+            response.put("bus", updatedBus);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @PutMapping("/{id}/increase-seats")
+    public ResponseEntity<?> increaseSeats(@PathVariable Long id, @RequestBody Map<String, Integer> request) {
+        try {
+            Integer additionalSeats = request.get("additionalSeats");
+            if (additionalSeats == null || additionalSeats <= 0) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "Additional seats must be greater than 0");
+                return ResponseEntity.badRequest().body(response);
+            }
+            Bus updatedBus = busService.increaseSeats(id, additionalSeats);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Bus seats increased successfully!");
+            response.put("bus", updatedBus);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteBus(@PathVariable Long id) {
+        try {
+            busService.deleteBus(id);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Bus deleted successfully!");
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
 }
